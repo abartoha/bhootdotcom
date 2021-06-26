@@ -1,5 +1,5 @@
 """
-Version 0.2 (beta)
+Version 0.3 (beta)
 author alrazi
 notredamecollegedhaka<3
 29-06-2021, HSC awaiting, Cold Monsoon weather, Zero point, Khulna
@@ -44,14 +44,15 @@ Thanks!
 import requests
 from bs4 import BeautifulSoup
 from tqdm import tqdm
-from os import listdir, getcwd
+from os import listdir, getcwd, mkdir
 from rich import print
 from rich.style import Style
 from rich.console import Console
 console = Console()
 starting_style = Style(color="green", blink=True, bold=True)
 already_downloaded_style = Style(color="purple", underline=True, encircle=True)
-
+if not listdir().__contains__("Files"):
+    mkdir("Files")
 j = 0
 headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"}
 episodes = []
@@ -114,3 +115,4 @@ if __name__ == "__main__":
         download_file(i)
     print("\n\n[bold red]NUMBER OF TOTAL EPISODES[/bold red]\t"+str(episodes.__len__()))
     print("[bold red]NUMBER OF DOWNLOADED EPISODES[/bold red]\t"+str(j))
+    input("Press Enter to exit")
