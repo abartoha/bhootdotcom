@@ -1,44 +1,13 @@
 """
-Version 0.3 (beta)
+Version 1.0.0 (release)
 author alrazi
-notredamecollegedhaka<3
-29-06-2021, HSC awaiting, Cold Monsoon weather, Zero point, Khulna
+notre dame college dhaka
+17-07-2021, Waiting for my COVID-19 test results. I am not given the order to be immunized.
 
-So basically the story starts with my previous even bigger project, webscraping 9.5 years of bhootFM...
-
-I was trying to impress myself thinking that I could master BeautifulSoup and become a webscraper all
-in all since my target was to become proficient in programming and get accustomed tothe changing nature 
-of the web.
-
-There aren't that many popular radio shows out there but this one is being hosted online on Shadhin App(?)
-which releases Bangladeshi podcasts and this sort of thing. It's half show half podcast since witness and
-messengers bring horror stories along with witnesses sending emails. Anyways, I digress.
-
-I found a small loophole in this project and that is:
-
-    A Pattern...
-
-    What kind of pattern you might say?
-
-    Look at this:
-
-        Episode Link: https://episodebd.com/download*/{4-digit-number}/{episode name} 
-        
-        Download Link: https://episodebd.com/download*/{4-digit-number}.html
-        
-        *not sure what's here, maybe more! however that's a redundant issue
-    
-    It means I can just scrape the paginations and voila! don't need to tree down to every episode page and waste bandwidth or time!!
-    It might seem unimportant but if this show runs as long as bhootFM did, that's going to come in handy in future when using this 
-    scraper to download all that.
-
-You are free to use this code as long as you are grateful and you attribute me.
-
-If the code fails, just check what's wrong with episodebd.com, or beautiful soup. It works alright on python 3.6, 3.7, 3.8.
-
-If you run it on py-2.7, you should try changing the html.parser to HTMLparser
-
-Thanks!
+I am very happy to announce to you that I hvae finalized the release version of my bhootdotcom
+autoscraping system. Please use it without care! you can readily turn it into a binary. It has
+rich text enabled. It will look nice even for a consoe application. I am happy that it was a v
+-ery satisfying and fulfilling side project. Mission Completed.
 """
 
 import requests
@@ -57,7 +26,12 @@ j = 0
 headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"}
 episodes = []
 list_dir = listdir(getcwd()+"\\Files")
-pages = [f"https://episodebd.com/categorylist/4821/new2old/{i}/BhootCom_all_Episode_With_Rj_Russell.html" for i in range(1,8)]
+
+# pages = [f"https://episodebd.com/categorylist/4821/new2old/{i}/BhootCom_all_Episode_With_Rj_Russell.html" for i in range(1,8)]
+
+def getSoup(url):
+    req = requests.get(url)
+    return BeautifulSoup(req.content, 'html.parser')
 
 def download_file(episode):
     url2, name = episode
@@ -108,10 +82,16 @@ def pagination(url):
 
 if __name__ == "__main__":
     console.print("STARTING PAGINATION...", style=starting_style)
+    pages = ["https://episodebd.com/categorylist/4821/new2old/1/BhootCom_all_Episode_With_Rj_Russell.html"]
     for i in tqdm(pages):
+        soup = getSoup(i)
+        pgn = soup.find('div', attrs={"class":"pgn"})
+        pgn_a_noclass = [i['href'] for i in pgn.find_all('a', attrs={'class':None, 'id':None}) if i['href'].__contains__('https://episodebd.com/categorylist/4821/new2old/')]
+        for k in pgn_a_noclass:
+            if not pages.__contains__(k):
+                pages.append(k)
         pagination(i)
     for i in episodes:
-        
         download_file(i)
     print("\n\n[bold red]NUMBER OF TOTAL EPISODES[/bold red]\t"+str(episodes.__len__()))
     print("[bold red]NUMBER OF DOWNLOADED EPISODES[/bold red]\t"+str(j))
